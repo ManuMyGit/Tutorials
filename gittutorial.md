@@ -51,6 +51,7 @@ Let's see a few examples:
  - Example 1: `git config --global user.name "anyName"` (config name of the repository for commits).
  - Example 2: `git config --global user.email anyEmail` (config email of the repository for commits).
  - Example 3: `git config --global core.editor "subl -n -w"` (set sublime text as default editor when a command requires some input).
+ - Example 4: `git config --global pager.branch false` (change output of commands, such as branch, to terminal).
 
 ### git alias
 It is important to note that there is no direct git alias command. Aliases are created through the use of the git config command and the Git configuration files. As with other configuration values, aliases can be created in a local or global scope.
@@ -260,6 +261,7 @@ The git remote command lets you create, view, and delete connections to other re
  - Example 4: `git remote rm <name>` (remove the connection to the remote repository called <name>).
  - Example 5: `git remote rename <old-name> <new-name>` (rename a remote connection from <old-name> to <new-name>).
  - Example 6: `git remote show origin` (it shows all information about origin repository, listed by git remote previously).
+ - Example 9: `git remote prune origin` (update local git cache).
 
 When you clone a repository with git clone, it automatically creates a remote connection called origin pointing back to the cloned repository. This is useful for developers creating a local copy of a central repository, since it provides an easy way to pull upstream changes or publish local commits. This behavior is also why most Git-based projects call their central repository origin.
 
@@ -286,6 +288,9 @@ The git push command is used to upload local repository content to a remote repo
  - Example 2: `git push <remote> --force` (same as the above command, but force the push even if it results in a non-fast-forward merge. Do not use the --force flag unless you’re absolutely sure you know what you’re doing).
  - Example 3: `git push <remote> --all` (push all of your local branches to the specified remot).
  - Example 4: `git push <remote> --tags` (tags are not automatically pushed when you push a branch or use the --all option. The --tags flag sends all of your local tags to the remote repository).
+ - Example 5: git push -u <remote> <branch> (it creates the branch into the origin remote repository).
+ - Example 6: git push -ud <remote> <branch> (it creates the branch into the origin remote repository and then removes the local branch).
+ - Example 7: git push <remote> -d <branch> (it removes the remote branch).
 
 # MAKING A PULL REQUEST (PR)
 ### How it works
@@ -328,9 +333,11 @@ The git branch command lets you create, list, rename, and delete branches. It do
  - Example 2: `git branch <branch>` (create a new branch called <branch>. This does not check out the new branch).
  - Example 3: `git branch -d <branch>` (delete the specified branch. This is a “safe” operation in that Git prevents you from deleting the branch if it has unmerged changes).
  - Example 4: `git branch -D <branch>` (force delete the specified branch, even if it has unmerged changes. This is the command to use if you want to permanently throw away all of the commits associated with a particular line of development).
- - Example 5: `git branch -m <branch>` (rename the current branch to <branch>).
- - Example 6: `git branch -r` (list all remote branches).
- - Example 7: `git branch -a` (list all branches, both remote and local).
+ - Example 5: git push <remote> -d <branch> (it removes the remote branch).
+ - Example 6: `git branch -m <branch>` (rename the current branch to <branch>).
+ - Example 7: `git branch -r` (list all remote branches).
+ - Example 8: `git branch -a` (list all branches, both remote and local).
+ - Example 9: `git remote prune origin` (update local git cache).
 
 ##### Creating branches
 It's important to understand that branches are just pointers to commits. When you create a branch, all Git needs to do is create a new pointer, it doesn’t change the repository in any other way.
