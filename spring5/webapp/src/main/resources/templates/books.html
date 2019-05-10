@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Web application</title>
+	<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/webjars/font-awesome/css/all.min.css">
+</head>
+<body>
+	<h1>Book List</h1>
+	<table class="table">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">Title</th>
+				<th scope="col">Author</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="book : ${books}">
+				<td scope="row" th:text="${book.id}"></td>
+				<td th:text="${book.title}"></td>
+				<td th:text="${book.publisher.name}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+</body>
+</html>
