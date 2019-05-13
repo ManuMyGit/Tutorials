@@ -113,4 +113,6 @@ At the time of launching the Java application
 - Do the following in the application.properties file:
 spring.application.profiles=qa.
 
+@Profile annotation can be used in code to define your beans. If a bean is defined with @Profile("dev") it will be available only with dev profile.
+
 There is a special profile, "default", which is used when no profile is set.
