@@ -57,6 +57,47 @@ To use Spring Data JPA is extremely easy. The only thing needed is to create an 
  - ...
 
 ## Thymeleaf
-Thymeleaf is a Java XML/XHTML/HTML5 template engine that can work both in web (servlet-based) and non-web environments. It is better suited for serving XHTML/HTML5 at the view layer of MVC-based web applications, but it can process any XML file even in offline environments. It provides full Spring Framework integration.
+Thymeleaf is a Java XML/XHTML/HTML5 template engine (it is not a web framework) that can work both in web (servlet-based) and non-web environments. It is better suited for serving XHTML/HTML5 at the view layer of MVC-based web applications, but it can process any XML file even in offline environments. It provides full Spring Framework integration.
+
+Thymeleaf is a replacement of JSPs (Java Server Pages), and it is not tied to web environment (it can be used for example for producint HTML emails).
+
+Thymeleaf templates are valid HTML documents and it can be viewed browser, in contrast to JSP. The natural templating ability allow you to perform rapid development, without the need to run a container to parse the template/JSP to view the product in a browser.
 
 It is extremely easy to integrate Thymeleaf with HTML, CSS, and JavaScript frameworks, such Bootstrap. Webjars project allows us to use.
+
+## HTTP
+HTTP Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, TRACE, ...
+
+ - GET: it is a request for a resource (html file, javascript, some entity, ...).
+ - HEAD: it is like GET, but only ask for metadata information without body.
+ - POST: it is used to post a data to the server.
+ - PATCH: it applies partial modifications to the specified resource.
+ - PUT: it is a request for the enclosed entity to be stored at the supply URI. If the entity already exists, it is expected to be updated.
+ - DELETE: it is a request to delete the specified resource.
+ - OPTIONS: it returns the HTTP methods supported by the specified URL.
+ - TRACE: it will echo the received request. It can be used to check if the request was altered by intermediate servers.
+
+Some of those methos are considered secure because they don't modify the status of the resource: GET, OPTIONS, HEAD and TRACE.
+
+### Idempotence
+It is a quality of an action such that repetitions of the action have no further effect on the outcome. For instance, PUT and DELETE are idempotent methods. Safe methods are idempotent as well.
+
+But being trully idempotent is not enforced by the protocol, it needs to be implemented.
+
+Table      Request Body     Response Body        Safe         Idempotent       Cacheable
+GET            No               Yes               Yes            Yes              Yes
+HEAD           No               No                Yes            Yes              Yes
+POST           Yes              Yes               No             No               Yes
+PUT            Yes              Yes               No             Yes              No
+DELETE         No               Optional?         No             Yes              No
+OPTIONS        Optional         Yes               Yes            Yes              No
+TRACE          No               Yes               Yes            Yes              No
+PATCH          Yes              Yes               Yes            No               Yes
+
+### HTTP status codes
+Every HTTP request returns a code with the result of the process.
+ - 100 series are information in nature.
+ - 200 series indicate successful request (200: Ok, 201: Created, 204: Accepted).
+ - 300 series are redirections (301: Moved permanently).
+ - 400 series indicate client side errors (400: Bad Request, 401: Unauthorized, 403: Forbidden, 404: Not found).
+ - 500 series indicate server side errors (500: Internal server error, 503: Service unavailable).
