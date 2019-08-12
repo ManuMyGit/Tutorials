@@ -86,7 +86,7 @@ It is used in Spring in order to inject dependencies.
 ### @Qualifier
 Used in case there are more than one type of bean which can match with the dependency and we want to specify a concrete one by name.
 
-###@Controller
+### @Controller
 The @Controller annotation indicates that a particular class serves the role of a controller. The @Controller annotation acts as a stereotype for the annotated class, indicating its role.
 
 ### Injection via reflection name
