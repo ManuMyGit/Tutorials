@@ -1,0 +1,21 @@
+package org.mjjaenl.springdi.controller;
+
+import org.mjjaenl.springdi.services.GreetingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class ConstructorInjectedController {
+	private GreetingService greetingService;
+	
+	@Autowired
+	public ConstructorInjectedController(@Qualifier("constructorGreetingServiceImpl") GreetingService greetingService) {
+		super();
+		this.greetingService = greetingService;
+	}
+	
+	public String sayHello() {
+		return greetingService.sayGreeting();
+	}
+}
