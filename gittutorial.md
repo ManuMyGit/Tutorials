@@ -159,6 +159,12 @@ This makes your working directory match the exact state of the a1e8fb5 commit. Y
 
 `git checkout master`
 
+This command can be used as well to load a remote branch. Let's see the following example:
+
+`git checkout --track origin/newsletter`
+
+Branch newsletter set up to track remote branch newsletter from origin. Switched to a new branch 'newsletter'
+
 ##### Udoing changes using git checkout
 Using the git checkout command we can checkout the previous commit, a1e8fb5, putting the repository in a state before the crazy commit happened. From this state (the detached HEAD state), we can execute `git checkout -b new_branch_without_crazy_commit`. This will create a new branch named new_branch_without_crazy_commit and switch to that state. The repo is now on a new history timeline in which the 872fa7e commit no longer exists. At this point, we can continue work on this new branch in which the 872fa7e commit no longer exists and consider it 'undone'. Unfortunately, if you need the previous branch, maybe it was your master branch, this undo strategy is not appropriate.
 
@@ -268,10 +274,11 @@ When you clone a repository with git clone, it automatically creates a remote co
 ### git fetch
 The git fetch command downloads commits, files, and refs from a remote repository into your local repo. Fetching is what you do when you want to see what everybody else has been working on. It’s similar to svn update in that it lets you see how the central history has progressed, but it doesn’t force you to actually merge the changes into your repository. Git isolates fetched content as a from existing local content, it has absolutely no effect on your local development work. Fetched content has to be explicitly checked out using the git checkout command. This makes fetching a safe way to review commits before integrating them with your local repository.
 
- - Example 1: `git fetch <remote>` (fetch all of the branches from the repository. This also downloads all of the required commits and files from the other repository.).
- - Example 2: `git fetch <remote> <branch>` (same than above, but for a specific branch).
- - Example 3: `git fetch --all` (a power move which fetches all registered remotes and their branches).
- - Example 4: `git fetch --dry-run` (the --dry-run option will perform a demo run of the command. It will output examples of actions it will take during the fetch but not apply them).
+ - Example 1: `git fetch` (same as next example).
+ - Example 2: `git fetch <remote>` (fetch all of the branches from the repository. This also downloads all of the required commits and files from the other repository).
+ - Example 3: `git fetch <remote> <branch>` (same than above, but for a specific branch).
+ - Example 4: `git fetch --all` (a power move which fetches all registered remotes and their branches).
+ - Example 5: `git fetch --dry-run` (the --dry-run option will perform a demo run of the command. It will output examples of actions it will take during the fetch but not apply them).
 
 ### git pull
 The git pull command is used to fetch and download content from a remote repository and immediately update the local repository to match that content. Merging remote upstream changes into your local repository is a common task in Git-based collaboration work flows. The git pull command is actually a combination of two other commands, git fetch followed by git merge. In the first stage of operation git pull will execute a git fetch scoped to the local branch that HEAD is pointed at. Once the content is downloaded, git pull will enter a merge workflow. A new merge commit will be-created and HEAD updated to point at the new commit.
