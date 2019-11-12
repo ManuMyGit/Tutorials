@@ -448,3 +448,9 @@ Similar to finishing a release branch, a hotfix branch gets merged into both mas
 When using the git-flow extensions:
 
 `git flow hotfix finish hotfix_branch`
+
+##### GitHub
+GitHub is an image repository. To use it, it is as easy as:
+ 1. To login: docker login --username=XXX --password=YYY.
+ 2. To push the image: docker push repo:tag.
+ 3. GitHub allows to use 1 repo for free, so if you want to use the same repo for different projects, tag must be used. For instance: repo:restapi, repo:soapapi, ... Even versions could be used.
