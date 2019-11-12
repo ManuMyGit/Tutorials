@@ -159,6 +159,12 @@ This makes your working directory match the exact state of the a1e8fb5 commit. Y
 
 `git checkout master`
 
+This command can be used as well to load a remote branch. Let's see the following example:
+
+`git checkout --track origin/newsletter`
+
+Branch newsletter set up to track remote branch newsletter from origin. Switched to a new branch 'newsletter'
+
 ##### Udoing changes using git checkout
 Using the git checkout command we can checkout the previous commit, a1e8fb5, putting the repository in a state before the crazy commit happened. From this state (the detached HEAD state), we can execute `git checkout -b new_branch_without_crazy_commit`. This will create a new branch named new_branch_without_crazy_commit and switch to that state. The repo is now on a new history timeline in which the 872fa7e commit no longer exists. At this point, we can continue work on this new branch in which the 872fa7e commit no longer exists and consider it 'undone'. Unfortunately, if you need the previous branch, maybe it was your master branch, this undo strategy is not appropriate.
 
