@@ -12,7 +12,7 @@
 	<artifactId>springdi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>springdi</name>
-	<description>2st Spring 5</description>
+	<description>Tutorial for Spring reactive programming</description>
 
 	<properties>
 		<java.version>1.8</java.version>
