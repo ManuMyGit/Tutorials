@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://basicusr:passbsusr@mongo:27020/JavaReactiveTutorial

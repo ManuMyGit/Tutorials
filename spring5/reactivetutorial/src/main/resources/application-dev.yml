@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://myFirstUser:5aE5QC0xfhMsqjdY@clusterzero-z8erk.mongodb.net/JavaReactiveTutorialDev?retryWrites=true&w=majority

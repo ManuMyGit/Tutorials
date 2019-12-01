@@ -1,0 +1,22 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:4.2.1
+    restart: always
+    command: mongod --auth --port 27020
+    ports:
+      - 27020:27020
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ../data/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=userroot
+      - MONGO_INITDB_ROOT_PASSWORD=passroot
+  app:
+    build: .
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    ports:
+      - 8080:8080
