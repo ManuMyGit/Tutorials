@@ -5,7 +5,7 @@ import java.time.Duration;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.mjjaenl.reactivetutorial.exception.CustomException;
+import org.mjjaenl.reactivetutorial.exception.NotFoundException;
 
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -52,13 +52,13 @@ public class FluxErrorTest {
 				.concatWith(Flux.error(new RuntimeException("Exception")))
 				.concatWith(Flux.just("D"))
 				.onErrorMap((e) -> {
-					return new CustomException(e);
+					return new NotFoundException(e);
 				});
 		
 		StepVerifier.create(stringFlux.log())
 			.expectSubscription()
 			.expectNext("A", "B", "C")
-			.expectError(CustomException.class)
+			.expectError(NotFoundException.class)
 			.verify();
 	}
 	
@@ -69,7 +69,7 @@ public class FluxErrorTest {
 				.concatWith(Flux.error(new RuntimeException("Exception")))
 				.concatWith(Flux.just("D"))
 				.onErrorMap((e) -> {
-					return new CustomException(e);
+					return new NotFoundException(e);
 				})
 				.retry(2);
 		
@@ -78,7 +78,7 @@ public class FluxErrorTest {
 			.expectNext("A", "B", "C")
 			.expectNext("A", "B", "C")
 			.expectNext("A", "B", "C")
-			.expectError(CustomException.class)
+			.expectError(NotFoundException.class)
 			.verify();
 	}
 	
@@ -89,7 +89,7 @@ public class FluxErrorTest {
 				.concatWith(Flux.error(new RuntimeException("Exception")))
 				.concatWith(Flux.just("D"))
 				.onErrorMap((e) -> {
-					return new CustomException(e);
+					return new NotFoundException(e);
 				})
 				.retryBackoff(2, Duration.ofSeconds(5));
 		

@@ -2,6 +2,7 @@ package org.mjjaenl.reactivetutorial.service.impl;
 
 import static org.mjjaenl.reactivetutorial.utils.Utils.isEmpty;
 
+import java.time.Duration;
 import java.util.Map;
 
 import org.mjjaenl.reactivetutorial.exception.NotFoundException;
@@ -22,7 +23,7 @@ public class ItemReactiveServiceImpl implements ItemReactiveService {
 	@Override
 	public Flux<Item> findAll(Map<String,String> params) {
 		if(isEmpty(params))
-			return itemRepository.findAll();
+			return itemRepository.findAll().delayElements(Duration.ofSeconds(2));
 		else
 			return itemRepository.findByDescription(params.get("description"));
 	}

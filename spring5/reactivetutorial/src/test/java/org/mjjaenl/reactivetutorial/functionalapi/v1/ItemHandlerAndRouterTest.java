@@ -1,4 +1,4 @@
-package org.mjjaenl.reactivetutorial.controller.v1;
+package org.mjjaenl.reactivetutorial.functionalapi.v1;
 
 import static org.junit.Assert.assertTrue;
 
@@ -32,7 +32,7 @@ import reactor.test.StepVerifier;
 @DirtiesContext
 @AutoConfigureWebTestClient
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ItemControllerTest {
+public class ItemHandlerAndRouterTest {
 	@Autowired
 	private WebTestClient webTestClient;
 	
@@ -60,7 +60,7 @@ public class ItemControllerTest {
 	@Test
 	public void test001GetAllItemsApproach1() {
 		System.out.println("\n\nTEST test001GetAllItems ******");
-		webTestClient.get().uri(ItemConstants.ITEM_URI_V1)
+		webTestClient.get().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentType(MyMediaType.APPLICATION_STREAM_JSON_UTF8)
@@ -71,7 +71,7 @@ public class ItemControllerTest {
 	@Test
 	public void test002GetAllItemsApproach2() {
 		System.out.println("\n\nTEST test002GetAllItemsApproach2 ******");
-		webTestClient.get().uri(ItemConstants.ITEM_URI_V1)
+		webTestClient.get().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentType(MyMediaType.APPLICATION_STREAM_JSON_UTF8)
@@ -88,7 +88,7 @@ public class ItemControllerTest {
 	@Test
 	public void test003GetAllItemsApproach3() {
 		System.out.println("\n\nTEST test003GetAllItemsApproach3 ******");
-		Flux<Item> items = webTestClient.get().uri(ItemConstants.ITEM_URI_V1)
+		Flux<Item> items = webTestClient.get().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentType(MyMediaType.APPLICATION_STREAM_JSON_UTF8)
@@ -103,7 +103,7 @@ public class ItemControllerTest {
 	@Test
 	public void test004GetByIdApproach1() {
 		System.out.println("\n\nTEST test004GetByIdApproach1 ******");
-		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1, "ABC")
+		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "ABC")
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentTypeCompatibleWith(MyMediaType.APPLICATION_JSON_UTF8)
@@ -114,7 +114,7 @@ public class ItemControllerTest {
 	@Test
 	public void test005GetByIdApproach2() {
 		System.out.println("\n\nTEST test005GetByIdApproach2 ******");
-		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1, "ABC")
+		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "ABC")
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().contentTypeCompatibleWith(MyMediaType.APPLICATION_JSON_UTF8)
@@ -125,7 +125,7 @@ public class ItemControllerTest {
 	@Test
 	public void test006GetByIdNotFound() {
 		System.out.println("\n\nTEST test006GetByIdNotFound ******");
-		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1, "1234")
+		webTestClient.get().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "1234")
 			.exchange()
 			.expectStatus().isNotFound();
 	}
@@ -133,7 +133,7 @@ public class ItemControllerTest {
 	@Test
 	public void test007GetByDescription() {
 		System.out.println("\n\nTEST test007GetByDescription ******");
-		webTestClient.get().uri(ItemConstants.ITEM_URI_V1+"?description=Item 1")
+		webTestClient.get().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL+"?description=Item 1")
 			.exchange()
 			.expectStatus().isOk()
 			.expectBody(Item.class)
@@ -146,7 +146,7 @@ public class ItemControllerTest {
 	public void test008CreateItem() {
 		System.out.println("\n\nTEST test008CreateItem ******");
 		Item item = new Item(null, "iPhone X", new BigDecimal(999.99));
-		webTestClient.post().uri(ItemConstants.ITEM_URI_V1)
+		webTestClient.post().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.contentType(MyMediaType.APPLICATION_JSON_UTF8)
 			.body(Mono.just(item), Item.class)
 			.exchange()
@@ -160,7 +160,7 @@ public class ItemControllerTest {
 	public void test009CreateInvalidItem() {
 		System.out.println("\n\nTEST test009CreateInvalidItem ******");
 		Item item = new Item(null, null, new BigDecimal(999.99));
-		webTestClient.post().uri(ItemConstants.ITEM_URI_V1)
+		webTestClient.post().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.contentType(MyMediaType.APPLICATION_JSON_UTF8)
 			.body(Mono.just(item), Item.class)
 			.exchange()
@@ -170,7 +170,7 @@ public class ItemControllerTest {
 	@Test
 	public void test010DeleteItem() {
 		System.out.println("\n\nTEST test010DeleteItem ******");
-		webTestClient.delete().uri(ItemConstants.ITEM_BY_ID_URI_V1, "ABC")
+		webTestClient.delete().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "ABC")
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
 			.exchange()
 			.expectStatus().isNoContent()
@@ -180,7 +180,7 @@ public class ItemControllerTest {
 	@Test
 	public void test011DeleteNonExistingItem() {
 		System.out.println("\n\nTEST test011DeleteNonExistingItem ******");
-		webTestClient.delete().uri(ItemConstants.ITEM_BY_ID_URI_V1, "1234")
+		webTestClient.delete().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "1234")
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
 			.exchange()
 			.expectStatus().isNotFound()
@@ -191,7 +191,7 @@ public class ItemControllerTest {
 	public void test012UpdateItem() {
 		System.out.println("\n\nTEST test012UpdateItem ******");
 		Item item = new Item(null, "QQQ", new BigDecimal(88.88));
-		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1, "ABC")
+		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "ABC")
 			.contentType(MyMediaType.APPLICATION_JSON_UTF8)
 			.body(Mono.just(item), Item.class)
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
@@ -209,7 +209,7 @@ public class ItemControllerTest {
 	public void test013UpdateNonExistingItem() {
 		System.out.println("\n\nTEST test013UpdateNonExistingItem ******");
 		Item item = new Item(null, "QQQ", new BigDecimal(88.88));
-		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1, "1234")
+		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "1234")
 			.contentType(MyMediaType.APPLICATION_JSON_UTF8)
 			.body(Mono.just(item), Item.class)
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
@@ -222,7 +222,7 @@ public class ItemControllerTest {
 	public void test014UpdateNonValidItem() {
 		System.out.println("\n\nTEST test014UpdateNonValidItem ******");
 		Item item = new Item(null, null, new BigDecimal(88.88));
-		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1, "ABC")
+		webTestClient.put().uri(ItemConstants.ITEM_BY_ID_URI_V1_FUNCTIONAL, "ABC")
 			.contentType(MyMediaType.APPLICATION_JSON_UTF8)
 			.body(Mono.just(item), Item.class)
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
@@ -234,7 +234,7 @@ public class ItemControllerTest {
 	@Test
 	public void test015DeleteAllItem() {
 		System.out.println("\n\nTEST test015DeleteAllItem ******");
-		webTestClient.delete().uri(ItemConstants.ITEM_URI_V1)
+		webTestClient.delete().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL)
 			.accept(MyMediaType.APPLICATION_JSON_UTF8)
 			.exchange()
 			.expectStatus().isNoContent()

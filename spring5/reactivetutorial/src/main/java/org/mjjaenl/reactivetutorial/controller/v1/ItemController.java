@@ -60,7 +60,7 @@ public class ItemController {
 	@DeleteMapping(ITEM_URI_V1)
 	public Mono<ResponseEntity<Void>> deleteAll() {
 		return itemReactiveService.deleteAll()
-			.map(item -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+			.then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 	}
 	
 	@PutMapping(ITEM_BY_ID_URI_V1)

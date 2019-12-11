@@ -9,6 +9,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mjjaenl.reactivetutorial.exception.NotFoundException;
 import org.mjjaenl.reactivetutorial.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,47 +65,67 @@ public class ItemReactiveServiceTest {
 	}
 	
 	@Test
-	public void test003GetItemByDescription() {
-		System.out.println("\n\nINIT TEST test003GetItemByDescription ******");
+	public void test003GetItemByNonExistingId() {
+		System.out.println("\n\nINIT TEST test003GetItemByNonExistingId ******");
+		StepVerifier.create(itemReactiveService.findById("1234"))
+			.expectSubscription()
+			.expectError(NotFoundException.class)
+			.verify();
+		System.out.println("END TEST test003GetItemByNonExistingId ******");
+	}
+	
+	@Test
+	public void test004GetItemByDescription() {
+		System.out.println("\n\nINIT TEST test004GetItemByDescription ******");
 		StepVerifier.create(itemReactiveService.findByDescription("Item 4"))
 			.expectSubscription()
 			.expectNextMatches((item) -> item.getDescription().equals(items.get(3).getDescription()))
 			.verifyComplete();
-		System.out.println("END TEST test003GetItemByDescription ******");
+		System.out.println("END TEST test004GetItemByDescription ******");
 	}
 	
 	@Test
-	public void test004SaveItem() {
-		System.out.println("\n\nTEST test004saveItem ******");
+	public void test005SaveItem() {
+		System.out.println("\n\nTEST test005SaveItem ******");
 		Item item = new Item(null, "Item 5", new BigDecimal(10.99));
 		StepVerifier.create(itemReactiveService.save(item).log("savedItem : "))
 			.expectSubscription()
 			.expectNextMatches((itemFromDatabase) -> item.getDescription().equals(itemFromDatabase.getDescription()) && itemFromDatabase.getId() != null)
 			.verifyComplete();
-		System.out.println("END TEST test004saveItem ******");
+		System.out.println("END TEST test005SaveItem ******");
 	}
 	
 	@Test
-	public void test005UpdateItem() {
-		System.out.println("\n\nTEST test005UpdateItem ******");
+	public void test006UpdateItem() {
+		System.out.println("\n\nTEST test006UpdateItem ******");
 		Flux<Item> updatedItem = itemReactiveService.findByDescription("Item 4")
 				.map(item -> {
 					item.setPrice(new BigDecimal(22.55));
 					return item;
 				})
 				.flatMap(item -> {
-					return itemReactiveService.save(item);
+					return itemReactiveService.update(item.getId(), item);
 				});
 		StepVerifier.create(updatedItem)
 			.expectSubscription()
 			.expectNextMatches((itemFromDatabase) -> new BigDecimal(22.55).equals(itemFromDatabase.getPrice()))
 			.verifyComplete();
-		System.out.println("END TEST test005UpdateItem ******");
+		System.out.println("END TEST test006UpdateItem ******");
 	}
 	
 	@Test
-	public void test006DeleteItem() {
-		System.out.println("\n\nTEST test006DeleteItem ******");
+	public void test007UpdateNonExistingItem() {
+		System.out.println("\n\nTEST test007UpdateNonExistingItem ******");
+		Mono<Item> updatedItem = itemReactiveService.update("12345", null);
+		StepVerifier.create(updatedItem)
+			.expectError(NotFoundException.class)
+			.verify();
+		System.out.println("END TEST test007UpdateNonExistingItem ******");
+	}
+	
+	@Test
+	public void test008DeleteItem() {
+		System.out.println("\n\nTEST test008DeleteItem ******");
 		Mono<Void> deletedItem = itemReactiveService.delete("ABC");
 		StepVerifier.create(deletedItem)
 			.expectSubscription()
@@ -112,6 +133,16 @@ public class ItemReactiveServiceTest {
 		StepVerifier.create(itemReactiveService.findAll(null))
 			.expectNextCount(3)
 			.verifyComplete();
-		System.out.println("END TEST test006DeleteItem ******");
+		System.out.println("END TEST test008DeleteItem ******");
+	}
+	
+	@Test
+	public void test009DeleteNonExistingItem() {
+		System.out.println("\n\nTEST test009DeleteNonExistingItem ******");
+		Mono<Void> deletedItem = itemReactiveService.delete("12345");
+		StepVerifier.create(deletedItem)
+			.expectError(NotFoundException.class)
+			.verify();
+		System.out.println("END TEST test009DeleteNonExistingItem ******");
 	}
 }

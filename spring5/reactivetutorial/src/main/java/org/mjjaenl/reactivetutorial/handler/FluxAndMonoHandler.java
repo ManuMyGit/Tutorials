@@ -2,7 +2,7 @@ package org.mjjaenl.reactivetutorial.handler;
 
 import java.time.Duration;
 
-import org.mjjaenl.reactivetutorial.exception.CustomException;
+import org.mjjaenl.reactivetutorial.exception.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -19,7 +19,7 @@ public class FluxAndMonoHandler {
 				.ok()
 				.contentType(MediaType.APPLICATION_STREAM_JSON)
 				.body(flux.log(), Integer.class)
-				.onErrorResume(CustomException.class, e -> ServerResponse.notFound().build());
+				.onErrorResume(NotFoundException.class, e -> ServerResponse.notFound().build());
 	}
 	
 	public Mono<ServerResponse> mono(ServerRequest request) {

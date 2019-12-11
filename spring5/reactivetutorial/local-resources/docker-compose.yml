@@ -12,11 +12,11 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=userroot
       - MONGO_INITDB_ROOT_PASSWORD=passroot
-  app:
-    build: .
-    depends_on:
-      - mongo
-    links:
-      - mongo
-    ports:
-      - 8080:8080
+  #app:
+    #build: .
+    #depends_on:
+      #- mongo
+    #links:
+      #- mongo
+    #ports:
+      #- 8080:8080
