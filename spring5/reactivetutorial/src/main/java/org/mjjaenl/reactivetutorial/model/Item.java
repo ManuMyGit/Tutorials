@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
@@ -24,5 +25,6 @@ public class Item {
 	@Size(min = 1, max = 100)
 	private String description;
 	@DecimalMin("0.01")
+	@NotNull
 	private BigDecimal price;
 }

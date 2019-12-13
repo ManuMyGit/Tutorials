@@ -23,6 +23,10 @@ public class ItemHandler {
 	@Autowired
 	private ItemReactiveService itemReactiveService;
 	
+	private static Mono<ServerResponse> notFound = ServerResponse.notFound().build();
+	private static Mono<ServerResponse> badRequest = ServerResponse.badRequest().build();
+	private static Mono<ServerResponse> noContent = ServerResponse.noContent().build();
+	
 	@Autowired
 	private Validator validator;
 	
@@ -44,7 +48,7 @@ public class ItemHandler {
 										.ok()
 										.contentType(MediaType.APPLICATION_JSON)
 										.body(fromPublisher(item, Item.class)))
-			.onErrorResume(error -> ServerResponse.notFound().build());
+			.onErrorResume(error -> notFound);
 	}
 	
 	public Mono<ServerResponse> create(ServerRequest request) {
@@ -53,33 +57,34 @@ public class ItemHandler {
 				validator.validate(newItem).isEmpty() ?
 					ServerResponse.ok()
 					.contentType(MediaType.APPLICATION_JSON)
-					.body(itemReactiveService.save(newItem), Item.class) : 
-						ServerResponse.badRequest().build());
+					.body(itemReactiveService.save(newItem), Item.class) : badRequest);
 	}
 	
 	public Mono<ServerResponse> delete(ServerRequest request) {
 		Mono<Void> mono = itemReactiveService.delete(request.pathVariable("id"));
 		return mono
-			.then(ServerResponse.noContent().build())
-			.onErrorResume(error -> ServerResponse.notFound().build());
+			.then(noContent)
+			.onErrorResume(error -> notFound);
 	}
 	
 	public Mono<ServerResponse> deleteAll(ServerRequest request) {
 		Mono<Void> mono = itemReactiveService.deleteAll();
 		return mono
-			.then(ServerResponse.noContent().build());
+			.then(noContent);
 	}
 	
 	public Mono<ServerResponse> update(ServerRequest request) {
-		Mono<Item> updatedItem = request.bodyToMono(Item.class).flatMap(newItem -> validator.validate(newItem).isEmpty() ?
-						itemReactiveService.update(request.pathVariable("id"), newItem) : Mono.error(new BadRequestException("Wrong")));
+		String id = request.pathVariable("id");
+		Mono<Item> updatedItem = request.bodyToMono(Item.class)
+				.flatMap(newItem -> validator.validate(newItem).isEmpty() ?
+						itemReactiveService.update(id, newItem) : Mono.error(new BadRequestException("Wrong")));
 		return updatedItem
 			.flatMap(newItem -> 
 						ServerResponse
 						.ok()
 						.contentType(MediaType.APPLICATION_JSON)
 						.body(itemReactiveService.update(request.pathVariable("id"), newItem), Item.class))
-			.onErrorResume(NotFoundException.class, e -> ServerResponse.notFound().build())
-			.onErrorResume(BadRequestException.class, e -> ServerResponse.badRequest().build());
+			.onErrorResume(NotFoundException.class, e -> notFound)
+			.onErrorResume(BadRequestException.class, e -> badRequest);
 	}
 }
