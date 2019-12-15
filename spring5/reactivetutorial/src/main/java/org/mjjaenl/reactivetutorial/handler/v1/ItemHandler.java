@@ -40,6 +40,11 @@ public class ItemHandler {
 				.contentType(MediaType.APPLICATION_STREAM_JSON)
 				.body(itemReactiveService.findAll(convertMultiValueMapStringStringToMap(request.queryParams())), Item.class);*/
 	}
+
+	//DefaultErrorWebExceptionHandler is the class responsible of managing the errors
+	public Mono<ServerResponse> getAllWithRuntimeException(ServerRequest request) {
+		throw new RuntimeException("RuntimeException occurred");
+	}
 	
 	public Mono<ServerResponse> getById(ServerRequest request) {
 		Mono<Item> item = itemReactiveService.findById(request.pathVariable("id"));

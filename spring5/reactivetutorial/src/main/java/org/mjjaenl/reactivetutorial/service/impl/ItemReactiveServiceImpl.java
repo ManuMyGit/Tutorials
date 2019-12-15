@@ -23,7 +23,7 @@ public class ItemReactiveServiceImpl implements ItemReactiveService {
 	@Override
 	public Flux<Item> findAll(Map<String,String> params) {
 		if(isEmpty(params))
-			return itemRepository.findAll().delayElements(Duration.ofSeconds(1));
+			return itemRepository.findAll();
 		else
 			return itemRepository.findByDescription(params.get("description"));
 	}

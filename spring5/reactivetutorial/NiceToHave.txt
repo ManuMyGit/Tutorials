@@ -1,9 +1,0 @@
-Secure the API with Oauth
-
-
-Instrucciones para desplegar en local:
-	- Borrar los containers creados.
-	- Borrar la imagen creada.
-	- Borrar la carpeta de datos.
-	- mvn clean package (si no se quieren tests, mvn clean -Dmaven.test.skip=true package)
-	- docker-compose up (o docker-compose -d up para levantar en background)

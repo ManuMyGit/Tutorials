@@ -1,10 +1,7 @@
 package org.mjjaenl.reactivetutorial.functionalapi.v1;
 
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -12,8 +9,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mjjaenl.reactivetutorial.initialize.InitializeData;
 import org.mjjaenl.reactivetutorial.model.Item;
-import org.mjjaenl.reactivetutorial.repository.ItemReactiveRepository;
 import org.mjjaenl.reactivetutorial.utils.ItemConstants;
 import org.mjjaenl.reactivetutorial.utils.MyMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.junit.Assert.*;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @DirtiesContext
@@ -35,25 +34,14 @@ import reactor.test.StepVerifier;
 public class ItemHandlerAndRouterTest {
 	@Autowired
 	private WebTestClient webTestClient;
-	
+
 	@Autowired
-	private ItemReactiveRepository itemReactiveRepository;
-	
-	List<Item> items = Arrays.asList(new Item(null, "Item 1", new BigDecimal(1)),
-			new Item(null, "Item 2", new BigDecimal(2)),
-			new Item(null, "Item 3", new BigDecimal(3)),
-			new Item("ABC", "Item 4", new BigDecimal(4.6))); //Used for findById
+	private InitializeData initializeData;
 	
 	@Before
 	public void setUp() {
 		System.out.println("\n\nINIT settingUp ******");
-		itemReactiveRepository.deleteAll()
-			.thenMany(Flux.fromIterable(items)) // We're processing several elements: Flux<Mono<Item>>
-			.flatMap(itemReactiveRepository::save) // Flux<Items>
-			.doOnNext((item) -> {
-				//No action
-			}).blockLast(); // This will do the instruction to wait until all elements are saved, not to do
-								// in PRO
+		initializeData.initializeData();
 		System.out.println("END settingUp ******");
 	}
 
@@ -80,7 +68,7 @@ public class ItemHandlerAndRouterTest {
 			.consumeWith((response) -> {
 				List<Item> listItems = response.getResponseBody();
 				listItems.forEach(item -> {
-					assertTrue(item.getId() != null);
+					assertNotNull(item.getId());
 				});
 			});
 	}
@@ -108,7 +96,7 @@ public class ItemHandlerAndRouterTest {
 			.expectStatus().isOk()
 			.expectHeader().contentTypeCompatibleWith(MyMediaType.APPLICATION_JSON_UTF8)
 			.expectBody(Item.class)
-			.consumeWith(itemResponse -> assertTrue(itemResponse.getResponseBody().getId().equals("ABC")));
+			.consumeWith(itemResponse -> assertEquals("ABC", itemResponse.getResponseBody().getId()));
 	}
 	
 	@Test
@@ -138,7 +126,7 @@ public class ItemHandlerAndRouterTest {
 			.expectStatus().isOk()
 			.expectBody(Item.class)
 			.consumeWith(itemResponse -> {
-				assertTrue(itemResponse.getResponseBody().getDescription().equals("Item 1"));
+				assertEquals("Item 1", itemResponse.getResponseBody().getDescription());
 			});
 	}
 	
@@ -199,9 +187,9 @@ public class ItemHandlerAndRouterTest {
 			.expectStatus().isOk()
 			.expectBody(Item.class)
 			.consumeWith(itemResponse -> {
-				assertTrue(itemResponse.getResponseBody().getId().equals("ABC"));
-				assertTrue(itemResponse.getResponseBody().getDescription().equals("QQQ"));
-				assertTrue(itemResponse.getResponseBody().getPrice().equals(new BigDecimal(88.88).setScale(2, RoundingMode.HALF_UP)));
+				assertEquals("ABC", itemResponse.getResponseBody().getId());
+				assertEquals("QQQ", itemResponse.getResponseBody().getDescription());
+				assertEquals(itemResponse.getResponseBody().getPrice(), new BigDecimal(88.88).setScale(2, RoundingMode.HALF_UP));
 			});
 	}
 	
@@ -239,5 +227,16 @@ public class ItemHandlerAndRouterTest {
 			.exchange()
 			.expectStatus().isNoContent()
 			.expectBody(Void.class);
+	}
+
+	@Test
+	public void test016RuntimeException() {
+		System.out.println("\n\nTEST test016RuntimeException ******");
+		webTestClient.get().uri(ItemConstants.ITEM_URI_V1_FUNCTIONAL + "/RuntimeException")
+				.accept(MyMediaType.APPLICATION_JSON_UTF8)
+				.exchange()
+				.expectStatus().is5xxServerError()
+				.expectBody(String.class)
+				.isEqualTo("RuntimeException occurred");
 	}
 }

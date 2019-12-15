@@ -23,6 +23,12 @@ public class ItemRouter {
 		return route(GET(ITEM_URI_V1_FUNCTIONAL)
 			.and(accept(MediaType.APPLICATION_JSON)), itemHandler::getAll);
 	}
+
+	@Bean
+	public RouterFunction<ServerResponse> getAllWithRuntimeException(ItemHandler itemHandler) {
+		return route(GET(ITEM_URI_V1_FUNCTIONAL + "/RuntimeException")
+				.and(accept(MediaType.APPLICATION_JSON)), itemHandler::getAllWithRuntimeException);
+	}
 	
 	@Bean
 	public RouterFunction<ServerResponse> getById(ItemHandler itemHandler) {
