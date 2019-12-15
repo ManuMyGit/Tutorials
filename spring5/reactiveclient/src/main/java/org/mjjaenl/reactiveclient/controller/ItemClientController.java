@@ -7,7 +7,11 @@ import static org.mjjaenl.reactiveclient.utils.Constants.CLIENT_ITEM_URI_V1_RETR
 import static org.mjjaenl.reactiveclient.utils.Constants.SERVER_ITEM_BY_ID_URI_V1;
 import static org.mjjaenl.reactiveclient.utils.Constants.SERVER_ITEM_URI_V1;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mjjaenl.reactiveclient.domain.Item;
+import org.mjjaenl.reactiveclient.utils.DataEnvironment;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +26,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
+@Slf4j
 public class ItemClientController {
+	@Autowired
+	private DataEnvironment env;
+
 	WebClient webClient = WebClient.create("http://localhost:8080");
 	
 	@GetMapping(value = CLIENT_ITEM_URI_V1_RETRIEVE, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
@@ -33,12 +41,43 @@ public class ItemClientController {
 			.log("Items in client using retrieve");
 	}
 	
-	@GetMapping(value = CLIENT_ITEM_URI_V1_EXCHANGE, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+	@GetMapping(CLIENT_ITEM_URI_V1_EXCHANGE + "/RuntimeException")
 	public Flux<Item> getUsingExchange() {
-		return webClient.get().uri(SERVER_ITEM_URI_V1)
+		return webClient.get().uri(SERVER_ITEM_URI_V1 + "/RuntimeException")
 			.exchange() //Exchange gives you the access to ClientResponse object
-			.flatMapMany(response -> response.bodyToFlux(Item.class))
-			.log("Items in client using exchange");
+			.flatMapMany(clientResponse -> {
+				if(clientResponse.statusCode().is5xxServerError()) {
+					return clientResponse.bodyToMono(String.class)
+						.flatMap(errorMessage -> {
+							log.error("The error message is " + errorMessage);
+							throw new RuntimeException(errorMessage);
+						});
+				} else {
+					return clientResponse.bodyToMono(Item.class);
+				}
+			});
+	}
+
+	@GetMapping(CLIENT_ITEM_URI_V1_RETRIEVE + "/RuntimeException")
+	public Flux<Item> getWithRuntimeErrorUsingRetrieve() {
+		return webClient.get().uri(SERVER_ITEM_URI_V1 + "/RuntimeException")
+				.retrieve() //Retrieve gives you the body of the response directly
+				.onStatus(HttpStatus::is5xxServerError, clientResponse -> {
+					Mono<String> errorMono = clientResponse.bodyToMono(String.class);
+					return errorMono.flatMap(errorMessage -> {
+						log.error("The error message is " + errorMessage);
+						throw new RuntimeException(errorMessage);
+					});
+				})
+				.bodyToFlux(Item.class);
+	}
+
+	@GetMapping(value = CLIENT_ITEM_URI_V1_EXCHANGE, produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+	public Flux<Item> getWithRuntimeErrorUsingExchange() {
+		return webClient.get().uri(SERVER_ITEM_URI_V1)
+				.exchange() //Exchange gives you the access to ClientResponse object
+				.flatMapMany(response -> response.bodyToFlux(Item.class))
+				.log("Items in client using exchange");
 	}
 	
 	@GetMapping(CLIENT_ITEM_BY_ID_URI_V1_RETRIEVE)
